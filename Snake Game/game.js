@@ -15,6 +15,8 @@ const config = {
   },
 };
 
+let directions = ["up", "down", "left", "right"];
+let actualDirection = "";
 let score = 0;
 let x = document.getElementById("score");
 x.innerHTML = score;
@@ -23,15 +25,25 @@ new Phaser.Game(config);
 
 // Cargar todos los elementos antes de iniciar el juego
 function preload() {
-  this.load.image("snake1", "assets/blocks/Leaves.PNG");
-  this.load.image("apple", "assets/blocks/Tnt.PNG");
+  this.load.image("snakeHeadUp", "assets/images/snake/head_up.png");
+  this.load.image("snakeHeadDown", "assets/images/snake/head_down.png");
+  this.load.image("snakeHeadLeft", "assets/images/snake/head_left.png");
+  this.load.image("snakeHeadRight", "assets/images/snake/head_right.png");
+
+  this.load.image(
+    "snakeBodyHorizontal",
+    "assets/images/snake/body_horizontal.png"
+  );
+  this.load.image("snakeHeadVertical", "assets/images/snake/body_vertical.png");
+
+  this.load.image("apple", "assets/images/apple/apple.png");
 }
 
 // Iniciar el juego, crear los elementos necesarios
 function create() {
   // Crear la cabeza de la serpiente
   this.snake = this.physics.add
-    .sprite(100, 50, "snake1")
+    .sprite(100, 50, "snakeHeadUp")
     .setOrigin(0.5, 0.5)
     .setCollideWorldBounds(true);
 
@@ -69,9 +81,9 @@ function create() {
 
       // Agregar un nuevo segmento a la serpiente
       let newSegment = this.physics.add.sprite(
-        this.snake.x,
-        this.snake.y,
-        "snake1"
+        -100,
+        -100,
+        "snakeBodyHorizontal"
       );
       newSegment.setOrigin(0.5, 0.5);
       this.snakeSegments.add(newSegment);
@@ -87,27 +99,46 @@ function create() {
 
 // Game Loop
 function update() {
-  // Mover la serpiente
-  this.snake.body.setVelocity(0);
-
-  if (this.keys.left.isDown) {
-    this.snake.body.setVelocityX(-200);
-    this.snake.flipX = true;
-  } else if (this.keys.right.isDown) {
-    this.snake.body.setVelocityX(200);
-    this.snake.flipX = false;
-  }
-
+  // Mover la serpiente hacia una dirección
   if (this.keys.up.isDown) {
     this.snake.body.setVelocityY(-200);
-    this.snake.flipY = true;
+    this.snake.setTexture("snakeHeadUp");
+    actualDirection = directions[0];
   } else if (this.keys.down.isDown) {
     this.snake.body.setVelocityY(200);
-    this.snake.flipY = false;
+    this.snake.setTexture("snakeHeadDown");
+    actualDirection = directions[1];
+  } else if (this.keys.left.isDown) {
+    this.snake.body.setVelocityX(-200);
+    this.snake.setTexture("snakeHeadLeft");
+    actualDirection = directions[2];
+  } else if (this.keys.right.isDown) {
+    this.snake.body.setVelocityX(200);
+    this.snake.setTexture("snakeHeadRight");
+    actualDirection = directions[3];
+  }
+
+  // Mantener la velocidad de la última dirección
+  this.snake.body.setVelocity(0);
+  switch (actualDirection) {
+    case directions[0]:
+      this.snake.body.setVelocityY(-200);
+      break;
+    case directions[1]:
+      this.snake.body.setVelocityY(200);
+      break;
+    case directions[2]:
+      this.snake.body.setVelocityX(-200);
+      break;
+    case directions[3]:
+      this.snake.body.setVelocityX(200);
+      break;
+    default:
+      this.snake.body.setVelocity(0);
   }
 
   // Mover los segmentos de la serpiente
-  let prevX = this.snake.x;
+  let prevX = this.snake.x - -25;
   let prevY = this.snake.y;
 
   this.snakeSegments.children.iterate(function (segment) {
