@@ -17,6 +17,10 @@ const config = {
 
 let directions = ["up", "down", "left", "right"];
 let actualDirection = "";
+let prevX = "";
+let prevY = "";
+let tempX = "";
+let tempY = "";
 let score = 0;
 let x = document.getElementById("score");
 x.innerHTML = score;
@@ -123,32 +127,73 @@ function update() {
   switch (actualDirection) {
     case directions[0]:
       this.snake.body.setVelocityY(-200);
+      // Mover los segmentos de la serpiente
+      prevX = this.snake.x;
+      prevY = this.snake.y + 25;
+
+      this.snakeSegments.children.iterate(function (segment) {
+        tempX = segment.x;
+        tempY = segment.y + 25;
+
+        segment.x = prevX;
+        segment.y = prevY;
+
+        prevX = tempX;
+        prevY = tempY;
+      });
       break;
     case directions[1]:
       this.snake.body.setVelocityY(200);
+      // Mover los segmentos de la serpiente
+      prevX = this.snake.x;
+      prevY = this.snake.y - 25;
+
+      this.snakeSegments.children.iterate(function (segment) {
+        tempX = segment.x;
+        tempY = segment.y - 25;
+
+        segment.x = prevX;
+        segment.y = prevY;
+
+        prevX = tempX;
+        prevY = tempY;
+      });
       break;
     case directions[2]:
       this.snake.body.setVelocityX(-200);
+      // Mover los segmentos de la serpiente
+      prevX = this.snake.x + 25;
+      prevY = this.snake.y;
+
+      this.snakeSegments.children.iterate(function (segment) {
+        tempX = segment.x + 25;
+        tempY = segment.y;
+
+        segment.x = prevX;
+        segment.y = prevY;
+
+        prevX = tempX;
+        prevY = tempY;
+      });
       break;
     case directions[3]:
       this.snake.body.setVelocityX(200);
+      // Mover los segmentos de la serpiente
+      prevX = this.snake.x - 25;
+      prevY = this.snake.y;
+
+      this.snakeSegments.children.iterate(function (segment) {
+        tempX = segment.x - 25;
+        tempY = segment.y;
+
+        segment.x = prevX;
+        segment.y = prevY;
+
+        prevX = tempX;
+        prevY = tempY;
+      });
       break;
     default:
       this.snake.body.setVelocity(0);
   }
-
-  // Mover los segmentos de la serpiente
-  let prevX = this.snake.x - -25;
-  let prevY = this.snake.y;
-
-  this.snakeSegments.children.iterate(function (segment) {
-    let tempX = segment.x;
-    let tempY = segment.y;
-
-    segment.x = prevX;
-    segment.y = prevY;
-
-    prevX = tempX;
-    prevY = tempY;
-  });
 }
