@@ -17,10 +17,20 @@ const config = {
 
 let directions = ["up", "down", "left", "right"];
 let actualDirection = "";
-let prevX = "";
-let prevY = "";
-let tempX = "";
-let tempY = "";
+const moveSnakeSegments = (snake, snakeSegments, offsetX = 0, offsetY = 0) => {
+  let prevX = snake.x + offsetX;
+  let prevY = snake.y + offsetY;
+
+  snakeSegments.children.iterate((segment) => {
+    [segment.x, segment.y, prevX, prevY] = [
+      prevX,
+      prevY,
+      segment.x + offsetX,
+      segment.y + offsetY,
+    ];
+  });
+};
+
 let score = 0;
 let x = document.getElementById("score");
 x.innerHTML = score;
@@ -125,74 +135,26 @@ function update() {
   // Mantener la velocidad de la última dirección
   this.snake.body.setVelocity(0);
   switch (actualDirection) {
-    case directions[0]:
+    case directions[0]: // Up
       this.snake.body.setVelocityY(-200);
-      // Mover los segmentos de la serpiente
-      prevX = this.snake.x;
-      prevY = this.snake.y + 25;
-
-      this.snakeSegments.children.iterate(function (segment) {
-        tempX = segment.x;
-        tempY = segment.y + 25;
-
-        segment.x = prevX;
-        segment.y = prevY;
-
-        prevX = tempX;
-        prevY = tempY;
-      });
+      moveSnakeSegments(this.snake, this.snakeSegments, 0, 25);
       break;
-    case directions[1]:
+
+    case directions[1]: // Down
       this.snake.body.setVelocityY(200);
-      // Mover los segmentos de la serpiente
-      prevX = this.snake.x;
-      prevY = this.snake.y - 25;
-
-      this.snakeSegments.children.iterate(function (segment) {
-        tempX = segment.x;
-        tempY = segment.y - 25;
-
-        segment.x = prevX;
-        segment.y = prevY;
-
-        prevX = tempX;
-        prevY = tempY;
-      });
+      moveSnakeSegments(this.snake, this.snakeSegments, 0, -25);
       break;
-    case directions[2]:
+
+    case directions[2]: // Left
       this.snake.body.setVelocityX(-200);
-      // Mover los segmentos de la serpiente
-      prevX = this.snake.x + 25;
-      prevY = this.snake.y;
-
-      this.snakeSegments.children.iterate(function (segment) {
-        tempX = segment.x + 25;
-        tempY = segment.y;
-
-        segment.x = prevX;
-        segment.y = prevY;
-
-        prevX = tempX;
-        prevY = tempY;
-      });
+      moveSnakeSegments(this.snake, this.snakeSegments, 25, 0);
       break;
-    case directions[3]:
+
+    case directions[3]: // Right
       this.snake.body.setVelocityX(200);
-      // Mover los segmentos de la serpiente
-      prevX = this.snake.x - 25;
-      prevY = this.snake.y;
-
-      this.snakeSegments.children.iterate(function (segment) {
-        tempX = segment.x - 25;
-        tempY = segment.y;
-
-        segment.x = prevX;
-        segment.y = prevY;
-
-        prevX = tempX;
-        prevY = tempY;
-      });
+      moveSnakeSegments(this.snake, this.snakeSegments, -25, 0);
       break;
+
     default:
       this.snake.body.setVelocity(0);
   }
